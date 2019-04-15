@@ -39,6 +39,7 @@ class Starter extends React.Component {
   }
 
 	flip(chosen_index, _ev) {
+
 		let compare_string = this.state.compare_string;
 
     // This is the index of the first panel chosen after clicking another panel
@@ -73,12 +74,15 @@ class Starter extends React.Component {
   		}
   		// Match found
   		else if (this.state.panel_list[chosen_index].value == compare_string
-        && chosen_index != compare_panel_index){
+              && chosen_index != compare_panel_index){
   			console.log("MATCH!");
   			this.setState({
   				panel_list: new_panel_list,
   				compare_string: "",
   			});
+        if (new_panel_list.every((panel) => !panel.hidden)) {
+          alert("You Won!\nFinal Score: " + this.state.score);
+        }
   		}
   		// No Match found
   		else if (compare_string != "") {
@@ -130,11 +134,11 @@ class Starter extends React.Component {
 				return <div className="row" key={rowNum}>{
 				  _.map(rowOfTiles, (panel, colNum) => {
 					  let panel_index = rowNum * NUMOFCOLUMNS + colNum;
-					  return <div className="column" key={panel_index}>
+					  return <span><div className="column" key={panel_index}>
 						  <div className="panel" onClick={this.flip.bind(this, panel_index)}>
 							  <RenderPanel value={panel.value} hidden={panel.hidden} />
 						  </div>
-						</div>;
+						</div></span>;
           })
 				}</div>
 			}
