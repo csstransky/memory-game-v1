@@ -6,13 +6,16 @@ export default function game_init(root) {
   ReactDOM.render(<Starter />, root);
 }
 
+let SWITCHBACKTIME = 675;
+let NUMOFCOLUMNS = 4;
+
 class Starter extends React.Component {
   constructor(props) {
     super(props);
 
 		// When panel is clicked,
 		//	if panel.hidden == true
-		//		if compare_string == empty 
+		//		if compare_string == empty
 		//			panel.hidden = false
 		//			compare_string = panel.value
 		//
@@ -20,30 +23,30 @@ class Starter extends React.Component {
 		//			show that panel
 		//
 		//			if compare_string != panel.value
-		//				short delay (3 sec?)
+		//				short delay (1 sec?)
 		//				panel.hidden = true
 		//				hide compare_string panel
 		//
 		//			compare_string = ""
-		
+
 		this.state = {
-			panel_list: _.shuffle("AABBCCDDEEFFGGHH")
-        .map(function (letter) {
-				  return { value: letter, hidden: true }; 
-        }),
+			panel_list: _.shuffle("AABBCCDDEEFFGGHH").map(function (letter) {
+			  return { value: letter, hidden: true };
+      }),
       compare_string: "",
 			score: 0
 		}
   }
 
-	flip(ii, _ev) {
+	flip(chosen_index, _ev) {
+
 		let compare_string = this.state.compare_string;
 
-		let compare_panel_index = this.state.panel_list
-			.findIndex((panel, jj) => {
-				if (panel.value === this.state.compare_string && !panel.hidden) {
-					return jj;
-				}
+    // This is the index of the first panel chosen after clicking another panel
+		let compare_panel_index = this.state.panel_list.findIndex((panel, index) => {
+		  if (panel.value === this.state.compare_string && !panel.hidden) {
+			  return index;
+			}
 		});
 
     // Weird bug where the 0 element will return -1 instead
@@ -51,109 +54,100 @@ class Starter extends React.Component {
       compare_panel_index = 0;
     }
 
-		let swap_back_last_panel = false;
-		let state2 = this.state.panel_list
-			.map((panel, jj) => { 
-				if (jj === ii && panel.hidden) {
-					console.log("Found panel: " + jj);
-					if (compare_string == "") {
-						return {...panel, hidden: false}
-					}
-					else if (compare_string != panel.value) {					
-						// Show panel here
-						// Add delay later with this flag
-						swap_back_last_panel = true;
-						return {...panel, hidden: false }	
-					}
-					else {
-						return {...panel, hidden: false };
-					}
-				}
-				else {
-					return panel;
-			}});
+		let new_panel_list = this.state.panel_list.map((panel, index) => {
+			if (index === chosen_index) {
+				console.log("Found panel: " + index);
+				return {...panel, hidden: false };
+			}
+			else {
+				return panel;
+		}});
 
-			// First block to compare click
-			if (this.state.panel_list[ii].hidden && compare_string == "") {
-				this.setState({
-					panel_list: state2,
-					compare_string: this.state.panel_list[ii].value,
-				});
-			}
-			// Match found
-			else if (this.state.panel_list[ii].value == compare_string 
-        && ii != compare_panel_index){
-				console.log("BIGGER RIOT");
-				this.setState({
-					panel_list: state2,
-					compare_string: "",
-				});
-			}
-			// No Match found
-			else if (this.state.panel_list[ii].hidden && compare_string != "") {	
-				this.setState({
-					panel_list: state2,
-					score: this.state.score + 1,
-				});
-				window.setTimeout(function () {
-					let state3 = this.state.panel_list.map((panel3, kk) => {
-            if (compare_panel_index === kk) {
-							return {...panel3, hidden: true}
-						}
-						else {
-							return panel3;
-						}
-					});
-					let state4 = state3.map((panel4, jj) => { 
-						if (jj === ii) {
-							return {...panel4, hidden: true}
-						}
-						else {
-							return panel4
-						}
-					});
-
-					this.setState({
-						panel_list: state4,
-						compare_string: "",
-					});
-				}.bind(this), 625);
-			}
+    // Uses a "LOCK" to stop all inputs
+    if (compare_string != "LOCK" && this.state.panel_list[chosen_index].hidden) {
+  		// First block to compare click
+  		if (compare_string == "") {
+  			this.setState({
+  				panel_list: new_panel_list,
+  				compare_string: this.state.panel_list[chosen_index].value,
+  			});
+  		}
+  		// Match found
+  		else if (this.state.panel_list[chosen_index].value == compare_string
+              && chosen_index != compare_panel_index){
+  			console.log("MATCH!");
+  			this.setState({
+  				panel_list: new_panel_list,
+  				compare_string: "",
+  			});
+        if (new_panel_list.every((panel) => !panel.hidden)) {
+          alert("You Won!\nFinal Score: " + this.state.score);
+        }
+  		}
+  		// No Match found
+  		else if (compare_string != "") {
+  			this.setState({
+  				panel_list: new_panel_list,
+  				score: this.state.score + 1,
+          compare_string: "LOCK"
+  			});
+  			window.setTimeout(
+          this.flip_back_function(compare_panel_index, chosen_index).bind(this),
+          SWITCHBACKTIME
+        );
+  		}
+    }
 	}
 
+  flip_back_function(first_panel_index, second_panel_index) {
+    return function() {
+      let new_panel_list = this.state.panel_list.map((panel, index) => {
+        if (first_panel_index === index || second_panel_index === index) {
+          return {...panel, hidden: true}
+        }
+        else {
+          return panel;
+        }
+      });
+
+      this.setState({
+        panel_list: new_panel_list,
+        compare_string: "",
+      });
+    }
+  }
+
  	reset() {
-		let state1 = {
-			panel_list: _.shuffle("AABBCCDDEEFFGGHH")
-				.map(function (letter) {
-					return { value: letter, hidden: true }; 
-				}),
+		let state = {
+			panel_list: _.shuffle("AABBCCDDEEFFGGHH").map(function (letter) {
+			  return { value: letter, hidden: true };
+			}),
 			compare_string: "",
 			score: 0
 		}
-		this.setState(state1);
+		this.setState(state);
 	}
 
   render() {
 		let gameboard = _.map(
-			_.chunk(this.state.panel_list, 4), (rowOfTiles, rowNum) => {
+      _.chunk(this.state.panel_list, NUMOFCOLUMNS), (rowOfTiles, rowNum) => {
 				return <div className="row" key={rowNum}>{
-						_.map(rowOfTiles, (panel, colNum) => {
-							let ll = rowNum * 4 + colNum;
-							return <div className="column" key={ll}>
-								<div className="panel" 
-										 onClick={this.flip.bind(this, ll)}>
-								<RenderPanel value={panel.value}
-														 hidden={panel.hidden} />
-								</div>					
-							</div>;
-							})
-						}</div>
-				});
+				  _.map(rowOfTiles, (panel, colNum) => {
+					  let panel_index = rowNum * NUMOFCOLUMNS + colNum;
+					  return <span><div className="column" key={panel_index}>
+						  <div className="panel" onClick={this.flip.bind(this, panel_index)}>
+							  <RenderPanel value={panel.value} hidden={panel.hidden} />
+						  </div>
+						</div></span>;
+          })
+				}</div>
+			}
+    );
 
-		return <div>SCORE: {this.state.score} 
-				{gameboard}
-				<p><button onClick={this.reset.bind(this)}>Restart</button></p>
-			</div>;
+		return <div>SCORE: {this.state.score}
+		  {gameboard}
+			<p><button onClick={this.reset.bind(this)}>Restart</button></p>
+		</div>;
   }
 }
 

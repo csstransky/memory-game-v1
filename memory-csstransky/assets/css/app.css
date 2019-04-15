@@ -2,19 +2,17 @@
 
 @import "~milligram/dist/milligram";
 
-.column > p {
-    padding-top: 10ex;
-    text-align: center;
+.row {
+  padding-bottom: 25px;
 }
 
 .panel {
-	background-color: rgb(200,200,200);
+	background-color: rgb(200,200,220);
 	text-color: black;
 	border: 1px solid black;
 	width: 150px;
 	height: 150px;
 	text-align: center;
-	line-height: 150px; 
-	font-size: 25px;
+	line-height: 150px;
+	font-size: 60px;
 }
-
