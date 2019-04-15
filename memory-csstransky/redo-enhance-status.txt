@@ -1,0 +1,24 @@
+CS3650 Spring 2019, Redo or Enhance.
+
+Did you chose to redo a previous assignment or enhance a project?
+Redo a previous assignment.
+
+
+Which one?
+Homework 4, the initial memory game without channels.
+
+
+If redo, what did you fix?
+It's properly deployed, and the game has correct flipping-back behaviors where
+two unmatched tiles will wait for nearly a second, ignore all inputs in the
+meantime, and then swap back to hidden tiles.
+
+Also, code has been correctly indented.
+
+
+If enhance, what enhancements did you make? Use at least a couple paragraphs to
+describe your goals and how you did at meeting them.
+
+
+
+If enhance, where (what URL) is your enhanced project deployed? Where's the git repo?
