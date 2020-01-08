@@ -6,6 +6,8 @@ Redo a previous assignment.
 
 Which one?
 Homework 4, the initial memory game without channels.
+http://hw04.cstransky.com
+https://github.com/csstransky/memory-game-v1
 
 
 If redo, what did you fix?

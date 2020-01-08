@@ -147,6 +147,7 @@ class Starter extends React.Component {
 		return <div>SCORE: {this.state.score}
 		  {gameboard}
 			<p><button onClick={this.reset.bind(this)}>Restart</button></p>
+      <p>Link back to the main domain: <a href="https://cstransky.com/">cstransky.com</a>.<br/></p>
 		</div>;
   }
 }
