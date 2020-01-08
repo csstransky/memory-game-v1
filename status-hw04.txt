@@ -12,7 +12,7 @@ https://github.com/csstransky/CS4550-Web-Development/tree/master/HW04
 
 
 3. What's the URL that you deployed to?
-hw04.cstransky.me
+hw04.cstransky.com
 
 
 
